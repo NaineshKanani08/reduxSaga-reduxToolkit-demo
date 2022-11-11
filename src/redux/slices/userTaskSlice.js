@@ -15,8 +15,11 @@ const userTaskSlice = createSlice({
             state.tasksList = action.payload
             state.deleteFlag = false
         },
-        addTask(state, action) {
+        addTask(action) {
             return action.payload
+        },
+        setAddTask: (state, action) => {
+            state.task = action.payload
         },
         deleteTask(id) {
             return id
@@ -32,21 +35,10 @@ const userTaskSlice = createSlice({
         setTaskDetail: (state, action) => {
             state.task = action.payload
         },
-        updateTask(state, action) {
+        updateTask(action) {
             return action.payload
         }
-
-
-        // getMovie(name) {
-        //     return name
-        // },
-        // setMovie: (state, action) => {
-        //     state.movie = action.payload
-        // },
-        // setMovieName: (state, action) => {
-        //     state.movieName = action.payload
-        // }
     }
 })
-export const { getAllTasks, setAllTasks, addTask, deleteTask, deleteSuccess, getTaskDetail, setTaskDetail, updateTask } = userTaskSlice.actions
+export const { getAllTasks, setAllTasks, addTask, deleteTask, deleteSuccess, getTaskDetail, setTaskDetail, updateTask, setAddTask } = userTaskSlice.actions
 export default userTaskSlice.reducer

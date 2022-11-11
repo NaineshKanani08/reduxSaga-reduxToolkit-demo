@@ -1,6 +1,8 @@
 import { call, fork, put, takeLatest } from "redux-saga/effects"
-import { getAllTasks, setAllTasks, addTask, deleteTask, deleteSuccess, setTaskDetail, getTaskDetail, updateTask } from "../slices/userTaskSlice"
+import { getAllTasks, setAllTasks, addTask, deleteTask, deleteSuccess, setTaskDetail, getTaskDetail, updateTask, setAddTask } from "../slices/userTaskSlice"
 import { taskApi } from "../../service/API"
+
+// ############### getAllTask List ############### 
 function* getTasksListAsync() {
     try {
         const fetchData = async () => {
@@ -21,6 +23,7 @@ function* getTasksList() {
     yield takeLatest(getAllTasks.type, getTasksListAsync)
 }
 
+// ############### getTask by ID ############### 
 function* getTaskAsync({ payload }) {
     try {
         const fetchData = async (payload) => {
@@ -40,15 +43,17 @@ function* getTaskData() {
     yield takeLatest(getTaskDetail.type, getTaskAsync)
 }
 
-
+// ############### addTask into list############### 
 function* addTasksListAsync({ payload }) {
     try {
         const fetchData = async (payload) => {
             const res = await taskApi.post('/tasks', payload)
             return res
         }
-        yield call(fetchData, payload)
-
+        const result = yield call(fetchData, payload)
+        if (result?.data) {
+            yield put(setAddTask(result.data))
+        }
     } catch (err) {
         console.log('err', err)
     }
@@ -58,6 +63,7 @@ function* addTaskList() {
     yield takeLatest(addTask.type, addTasksListAsync)
 }
 
+// ############### deleteTask by ID ############### 
 function* deleteTaskAsync({ payload }) {
     const id = payload
     try {
@@ -66,7 +72,7 @@ function* deleteTaskAsync({ payload }) {
             return res
         }
         const result = yield call(fetchData, id)
-        if (result?.status === 200 /* && Object.keys(result.data).length */) {
+        if (result?.status === 200) {
             yield put(deleteSuccess(id))
         }
     } catch (err) {
@@ -78,6 +84,7 @@ function* deleteTaskList() {
     yield takeLatest(deleteTask.type, deleteTaskAsync)
 }
 
+// ############### updateTask by ID ############### 
 function* updateTaskAsync({ payload }) {
     const { id, ...rest } = payload
     try {
